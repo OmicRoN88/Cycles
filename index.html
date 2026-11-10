@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Калькулятор времени D&D мира</title>
+<title>Калькулятор времени Мистериума</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -109,6 +109,13 @@
   }
   input[type=number] { -moz-appearance: textfield; }
 
+  /* Подпись лимита часов под полем */
+  .limit-hint {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    min-height: 1.1em;
+  }
+
   .error {
     color: var(--error);
     font-size: 0.85rem;
@@ -191,12 +198,6 @@
     border-radius: 8px;
   }
 
-  .hint {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    margin-top: 6px;
-  }
-
   @media (max-width: 480px) {
     h1 { font-size: 1.3rem; }
     .panel { padding: 16px; }
@@ -206,7 +207,7 @@
 </head>
 <body>
 <div class="app">
-  <h1>Калькулятор времени D&D мира</h1>
+  <h1>Калькулятор времени Мистериума</h1>
   <p class="subtitle">Обороты · Круги · Циклы</p>
 
   <!-- БЛОК 1: ТЕКУЩЕЕ ВРЕМЯ -->
@@ -233,6 +234,7 @@
       <div class="field">
         <label for="cur-hours">Прошло часов</label>
         <input type="number" id="cur-hours" value="20" min="0" step="0.5">
+        <div class="limit-hint" id="cur-limit"></div>
       </div>
     </div>
     <div class="error" id="cur-error"></div>
@@ -282,9 +284,10 @@
         <div class="card-label">Цикл</div>
         <div class="card-value" id="after-cikl">—</div>
       </div>
-      <div class="card">
-        <div class="card-label">Прошло часов</div>
+      <div class="field" style="text-align:left;">
+        <div class="card-label" style="text-align:center;">Прошло часов</div>
         <div class="card-value small" id="after-proshlo">—</div>
+        <div class="limit-hint" id="after-limit" style="text-align:center;"></div>
       </div>
     </div>
   </div>
@@ -338,101 +341,57 @@
    КОНСТАНТЫ МИРА
    ============================================================ */
 
-// Порядок циклов в каждом круге (номера циклов 1..16)
 const CYCLE_ORDER = {
   1: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
   2: [2,4,6,8,10,12,14,16,1,3,5,7,9,11,13,15],
   3: [8,7,6,5,4,3,2,1,9,10,11,12,13,14,15,16]
 };
 
-// Шаблоны оборотов (какие круги и в каком порядке идут в 4 позициях оборота)
-// Шаблон 1: К1, К2, К3, К2
-// Шаблон 2: К1, К2, К1, К3
-// Шаблон 3: К1, К3, К2, К3
-// Шаблон 4: К2, К1, К2, К3
-// Шаблон 5 = Шаблон 1 (период 5)
 const OBOROT_TEMPLATES = {
   1: [1, 2, 3, 2],
   2: [1, 2, 1, 3],
   3: [1, 3, 2, 3],
   4: [2, 1, 2, 3],
-  5: [1, 2, 3, 2]  // = шаблон 1
+  5: [1, 2, 3, 2]
 };
 
-// Базовый оборот: 852-й соответствует шаблону 1
 const BASE_OBOROT = 852;
 
-// Длительность цикла по его номеру: цикл N = 20 + (N-1)*2.5
 function cycleDuration(n) {
   return 20 + (n - 1) * 2.5;
 }
-
-// Сумма длительностей всех 16 циклов = 620 (длительность одного круга)
-const KRUG_TOTAL_HOURS = 620;
-
-// Сумма длительностей 4 кругов = 2480 (длительность оборота)
-const OBOROT_TOTAL_HOURS = 2480;
 
 /* ============================================================
    ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
    ============================================================ */
 
-// Какой шаблон у данного оборота (1..5)
 function getTemplateNumber(oborot) {
-  // ((oborot - 852) mod 5) + 1, с корректной обработкой отрицательных
   let diff = oborot - BASE_OBOROT;
   let mod = ((diff % 5) + 5) % 5;
   return mod + 1;
 }
 
-// Массив кругов (1..4) для данного оборота
 function getKrugsForOborot(oborot) {
   return OBOROT_TEMPLATES[getTemplateNumber(oborot)];
 }
 
-// Позиция цикла внутри круга (0..15). Возвращает -1 если цикла нет (не должно случаться)
-function getCyclePositionInKrug(krug, cycleNumber) {
-  const order = CYCLE_ORDER[krug];
-  if (!order) return -1;
-  return order.indexOf(cycleNumber);
-}
-
-// Сколько часов от начала круга до начала цикла с номером cycleNumber в данном круге
-function hoursFromKrugStartToCycle(krug, cycleNumber) {
-  const order = CYCLE_ORDER[krug];
-  const pos = order.indexOf(cycleNumber);
-  if (pos === -1) return null;
-  let sum = 0;
-  for (let i = 0; i < pos; i++) {
-    sum += cycleDuration(order[i]);
-  }
-  return sum;
-}
-
-// Полная длительность цикла по номеру
-function cycleDurationByNumber(n) {
-  return cycleDuration(n);
-}
-
-// Проверка: является ли номер цикла валидным (1..16)
 function isValidCycleNumber(n) {
   return Number.isInteger(n) && n >= 1 && n <= 16;
 }
 
-// Проверка: является ли номер круга валидным (1..4)
 function isValidKrug(n) {
   return Number.isInteger(n) && n >= 1 && n <= 4;
 }
 
+function formatHours(h) {
+  if (Number.isInteger(h)) return h.toString();
+  return h.toString();
+}
+
 /* ============================================================
-   НОРМАЛИЗАЦИЯ ТЕКУЩЕГО ВРЕМЕНИ
-   Приводит (оборот, позиция_круга, номер_цикла, прошло_часов)
-   к корректному виду, перенося лишние часы вперёд.
-   
-   Возвращает { oborot, krugPosition (1..4), cycleNumber, hoursInto }
+   НОРМАЛИЗАЦИЯ
    ============================================================ */
 function normalizeCurrent(oborot, krugPosition, cycleNumber, hoursInto) {
-  // Валидация базовых значений
   if (!Number.isInteger(oborot) || oborot < 1) {
     throw new Error('Оборот должен быть целым числом ≥ 1');
   }
@@ -446,36 +405,30 @@ function normalizeCurrent(oborot, krugPosition, cycleNumber, hoursInto) {
     throw new Error('Прошло часов должно быть числом ≥ 0');
   }
 
-  // Если часы внутри цикла превышают его длительность — переносим
-  let dur = cycleDurationByNumber(cycleNumber);
+  let dur = cycleDuration(cycleNumber);
   while (hoursInto >= dur) {
     hoursInto -= dur;
 
-    // Переходим к следующему циклу в текущем круге
     let order = CYCLE_ORDER[krugPosition];
     let pos = order.indexOf(cycleNumber);
     if (pos === -1) {
-      // Не должно случаться, но на всякий случай
       throw new Error('Ошибка: цикл не найден в круге');
     }
 
     if (pos < order.length - 1) {
-      // Следующий цикл в том же круге
       cycleNumber = order[pos + 1];
     } else {
-      // Конец круга — переходим к следующему кругу в обороте
       if (krugPosition < 4) {
         krugPosition += 1;
         let newOrder = CYCLE_ORDER[getKrugsForOborot(oborot)[krugPosition - 1]];
         cycleNumber = newOrder[0];
       } else {
-        // Конец оборота — переходим к следующему обороту
         oborot += 1;
         krugPosition = 1;
         cycleNumber = CYCLE_ORDER[getKrugsForOborot(oborot)[0]][0];
       }
     }
-    dur = cycleDurationByNumber(cycleNumber);
+    dur = cycleDuration(cycleNumber);
   }
 
   return { oborot, krugPosition, cycleNumber, hoursInto };
@@ -485,29 +438,13 @@ function normalizeCurrent(oborot, krugPosition, cycleNumber, hoursInto) {
    РАСЧЁТ: СПУСТЯ N ЧАСОВ
    ============================================================ */
 function calcAfterHours(current, hoursToAdd) {
-  // current — уже нормализованный объект
-  // hoursToAdd — сколько часов добавляем (может быть большим)
-  
   let { oborot, krugPosition, cycleNumber, hoursInto } = current;
-  
-  // Сначала добавим часы к текущему циклу
-  let dur = cycleDurationByNumber(cycleNumber);
   let remaining = hoursInto + hoursToAdd;
-  
-  // Нормализуем через уже готовую функцию
   return normalizeCurrent(oborot, krugPosition, cycleNumber, remaining);
 }
 
 /* ============================================================
    РАСЧЁТ: СКОЛЬКО ЧАСОВ ДО ЦЕЛИ
-   Цель: (targetOborot, targetKrugPosition, targetCycleNumber)
-   Возвращает { totalHours, warning }
-   
-   Логика:
-   - Считаем от начала текущего цикла (текущее время нормализовано).
-   - Если цель в том же обороте/круге и цикл ещё не наступил — считаем напрямую.
-   - Если цикл уже прошёл в этом круге — предупреждение и считаем до ближайшего
-     такого цикла в следующем круге/обороте.
    ============================================================ */
 function calcHoursTo(current, target) {
   const { oborot, krugPosition, cycleNumber, hoursInto } = current;
@@ -515,190 +452,58 @@ function calcHoursTo(current, target) {
 
   let warning = null;
 
-  // Проверим, что цель вообще в будущем или совпадает
-  // Сравним позиции: цель должна быть >= текущей
-  // Для простоты будем идти по шагам.
-
-  // Если цель — тот же оборот, тот же круг, тот же цикл:
-  if (targetOborot === oborot && targetKrugPosition === krugPosition && targetCycleNumber === cycleNumber) {
-    // Цель — текущий цикл. Часов до начала = -hoursInto (но это прошлое).
-    // Значит, ближайший такой цикл будет в следующем круге/обороте.
-    // Обработаем как "цикл уже прошёл".
-    warning = `Цикл ${targetCycleNumber} в Круге ${targetKrugPosition} уже идёт (прошло ${hoursInto} ч). Ближайший такой же цикл будет позже.`;
-  }
-
-  // Проверим, не в прошлом ли цель (по позиции в обороте)
-  // Найдём "порядковый номер" текущей позиции в обороте:
-  // (krugPosition-1)*16 + позиция_цикла_в_круге
-  // и то же для цели в целевом обороте.
-
-  // Но проще: смоделируем движение вперёд от текущего момента,
-  // пока не встретим нужный (оборот, круг, цикл).
-  // Ограничим разумным числом шагов, чтобы не зациклиться.
-
-  // Однако есть нюанс: цель может быть в том же круге, но цикл уже прошёл.
-  // Тогда мы должны перейти к следующему кругу с тем же номером круга?
-  // По логике пользователя: "ближайший шестой цикл наступит уже в следующем круге".
-  // То есть мы ищем ближайший цикл с нужным номером, но в каком круге?
-  // Видимо, в любом следующем круге, где этот цикл есть (а он есть в любом).
-  // Но пользователь указал конкретный круг. Значит, если в указанном круге
-  // цикл уже прошёл, мы ищем этот же цикл в следующем круге того же типа?
-  // Или в следующем круге вообще?
-  
-  // Уточнение от пользователя: "введём 6 цикл, а сейчас 5-й во 2-м круге.
-  // Ближайший 6-й цикл будет в следующем круге". То есть в следующем круге
-  // (не обязательно того же типа). Значит, мы ищем ближайшее наступление
-  // цикла с номером targetCycleNumber в ЛЮБОМ круге, начиная с текущего момента,
-  // но при этом целевой круг указан для определения "когда именно" — 
-  // видимо, пользователь хочет знать, когда наступит именно комбинация
-  // (оборот, круг, цикл). Если она уже прошла — предупреждаем и ищем
-  // ближайшую такую же комбинацию в будущем (следующий такой же круг в следующем обороте?).
-  
-  // Перечитаем пример: "Сколько часов до 852 оборота, 2 круга и 7 цикла?"
-  // Текущее: 852, круг 2, цикл 5, прошло 20.
-  // Ответ: 10 часов (до начала 7-го цикла).
-  // Здесь цель — тот же оборот, тот же круг, цикл 7. Он ещё не наступил.
-  
-  // А если бы цель была "852, круг 2, цикл 3"? Цикл 3 в круге 2 идёт после 1,
-  // то есть в порядке К2: 2,4,6,8,10,12,14,16,1,3,5,7,...
-  // Цикл 3 стоит на 10-й позиции, а цикл 5 — на 11-й. Значит, цикл 3 уже прошёл.
-  // Тогда предупреждение и ищем ближайший цикл 3 в следующем круге.
-  // Следующий круг в обороте 852 — это круг 3 (шаблон 1: К1,К2,К3,К2).
-  // В круге 3 порядок: 8,7,6,5,4,3,2,1,9,... Цикл 3 стоит на 6-й позиции.
-  // Считаем часы до него.
-  
-  // Значит, логика: если комбинация (оборот, круг, цикл) в будущем —
-  // считаем до неё. Если в прошлом — предупреждаем и ищем ближайшую
-  // такую же комбинацию (тот же номер круга) в следующих оборотах?
-  // Или в следующем круге вообще?
-  
-  // Пользователь сказал: "ближайший шестой цикл, который наступит уже в следующем круге".
-  // То есть он не привязывается к тому же номеру круга. Он просто ищет
-  // ближайшее наступление цикла с номером 6 в любом круге после текущего момента.
-  
-  // Но тогда зачем пользователь указывает круг в цели? Возможно, для того,
-  // чтобы указать, что цель — именно в этом круге, и если она прошла,
-  // то предупредить. А расчёт вести до ближайшего такого же цикла
-  // в следующем круге (не обязательно того же номера).
-  
-  // Я реализую так:
-  // 1. Проверяем, есть ли цель в будущем (строго после текущего момента).
-  //    Если да — считаем до неё.
-  // 2. Если цель в прошлом или совпадает с текущим моментом —
-  //    предупреждаем и ищем ближайшее наступление цикла с номером targetCycleNumber
-  //    в любом круге после текущего момента (начиная со следующего цикла).
-  //    При этом считаем часы до него.
-  
-  // Реализация: будем идти вперёд по циклам от текущего момента,
-  // накапливая часы, пока не встретим цикл с нужным номером.
-  // Ограничим поиск, например, 100000 шагов (это более чем достаточно).
-  
-  // Но сначала проверим, не является ли цель "в будущем" в том же обороте/круге.
-  // Для этого найдём абсолютную позицию текущего момента и цели в рамках
-  // "оборот-круг-цикл" и сравним.
-  
-  // Абсолютная позиция в обороте: (krugPosition-1)*16 + позиция_цикла_в_круге
-  // Но позиция цикла в круге зависит от порядка. Посчитаем.
-  
   const currentAbsPos = (krugPosition - 1) * 16 + CYCLE_ORDER[krugPosition].indexOf(cycleNumber);
   const targetAbsPos = (targetKrugPosition - 1) * 16 + CYCLE_ORDER[targetKrugPosition].indexOf(targetCycleNumber);
-  
-  // Если целевой оборот больше текущего — цель точно в будущем.
-  // Если равен — сравниваем абсолютные позиции.
-  // Если меньше — цель в прошлом.
-  
+
   let targetIsFuture = false;
   if (targetOborot > oborot) {
     targetIsFuture = true;
   } else if (targetOborot === oborot) {
-    if (targetAbsPos > currentAbsPos) {
-      targetIsFuture = true;
-    } else if (targetAbsPos === currentAbsPos) {
-      // Тот же цикл. Цель — начало этого цикла, но мы уже внутри.
-      // Значит, это прошлое (начало цикла уже было).
-      targetIsFuture = false;
-    } else {
-      targetIsFuture = false;
-    }
+    targetIsFuture = targetAbsPos > currentAbsPos;
   } else {
     targetIsFuture = false;
   }
-  
+
   if (targetIsFuture) {
-    // Считаем часы до начала целевого цикла.
-    // Часы до конца текущего цикла:
-    let hoursToEndOfCurrent = cycleDurationByNumber(cycleNumber) - hoursInto;
-    
-    // Если цель в том же круге и том же обороте:
+    let hoursToEndOfCurrent = cycleDuration(cycleNumber) - hoursInto;
+
     if (targetOborot === oborot && targetKrugPosition === krugPosition) {
-      // Просто суммируем длительности циклов между текущим и целевым
-      // в порядке круга.
       let order = CYCLE_ORDER[krugPosition];
       let curPos = order.indexOf(cycleNumber);
       let tgtPos = order.indexOf(targetCycleNumber);
       let sum = 0;
       for (let i = curPos + 1; i < tgtPos; i++) {
-        sum += cycleDurationByNumber(order[i]);
+        sum += cycleDuration(order[i]);
       }
-      // Плюс остаток текущего цикла
       let total = hoursToEndOfCurrent + sum;
-      // Плюс часы до начала целевого цикла = 0 (мы считаем до начала)
       return { totalHours: total, warning: null };
     }
-    
-    // Если цель в том же обороте, но в другом круге (или в следующем обороте)
-    // — идём шагами.
-    // Начнём с текущего момента и будем добавлять циклы.
-    // Это можно сделать через normalizeCurrent, но нам нужен точный подсчёт.
-    // Реализуем цикл: начиная с текущего цикла, идём вперёд, пока не дойдём
-    // до целевого (оборот, круг, цикл). Считаем часы.
-    
-    // Для эффективности: если цель далеко, можно посчитать разницу в оборотах
-    // и умножить на 2480, но для простоты и надёжности сделаем пошагово
-    // с ограничением. Если目标 очень далеко (например, +1000 оборотов),
-    // пошаговый проход займёт много итераций. Но 1000 оборотов * 4 круга * 16 циклов = 64000 шагов — терпимо.
-    // Ограничим 1 000 000 шагов.
-    
+
     let steps = 0;
-    let total = 0;
-    let o = oborot, k = krugPosition, c = cycleNumber, h = hoursInto;
-    
-    // Сначала добавим остаток текущего цикла, чтобы перейти к следующему
-    // Но нам нужно считать до НАЧАЛА целевого цикла, поэтому:
-    // Если цель — следующий цикл, то total = hoursToEndOfCurrent.
-    // Если цель — через несколько циклов, суммируем.
-    
-    // Пройдём вперёд по циклам, начиная со следующего после текущего.
-    // Но сначала добавим остаток текущего цикла.
-    total += hoursToEndOfCurrent;
-    
-    // Перейдём к следующему циклу
+    let total = hoursToEndOfCurrent;
+    let o = oborot, k = krugPosition, c = cycleNumber;
+
     let order = CYCLE_ORDER[k];
     let pos = order.indexOf(c);
-    let nextO = o, nextK = k, nextC;
     if (pos < order.length - 1) {
-      nextC = order[pos + 1];
+      c = order[pos + 1];
     } else {
-      // Конец круга
       if (k < 4) {
-        nextK = k + 1;
-        let newOrder = CYCLE_ORDER[getKrugsForOborot(o)[nextK - 1]];
-        nextC = newOrder[0];
+        k += 1;
+        let newOrder = CYCLE_ORDER[getKrugsForOborot(o)[k - 1]];
+        c = newOrder[0];
       } else {
-        nextO = o + 1;
-        nextK = 1;
-        nextC = CYCLE_ORDER[getKrugsForOborot(nextO)[0]][0];
+        o += 1;
+        k = 1;
+        c = CYCLE_ORDER[getKrugsForOborot(o)[0]][0];
       }
     }
-    o = nextO; k = nextK; c = nextC; h = 0;
-    
-    // Теперь идём, пока не дойдём до цели
+
     while (steps < 1000000) {
       if (o === targetOborot && k === targetKrugPosition && c === targetCycleNumber) {
         return { totalHours: total, warning: null };
       }
-      // Добавим длительность текущего цикла и перейдём к следующему
-      total += cycleDurationByNumber(c);
+      total += cycleDuration(c);
       order = CYCLE_ORDER[k];
       pos = order.indexOf(c);
       if (pos < order.length - 1) {
@@ -718,19 +523,13 @@ function calcHoursTo(current, target) {
     }
     return { totalHours: null, warning: 'Не удалось найти цель в разумном пределе' };
   } else {
-    // Цель в прошлом — предупреждение и ищем ближайший такой же цикл в будущем
-    // (номер цикла targetCycleNumber, любой круг, начиная со следующего цикла).
-    
     warning = `Цикл ${targetCycleNumber} в Круге ${targetKrugPosition} уже прошёл. Ближайший Цикл ${targetCycleNumber} наступит позже.`;
-    
-    // Ищем ближайший цикл с номером targetCycleNumber, начиная со следующего цикла.
+
     let total = 0;
-    let o = oborot, k = krugPosition, c = cycleNumber, h = hoursInto;
-    
-    // Остаток текущего цикла
-    total += cycleDurationByNumber(c) - h;
-    
-    // Переход к следующему циклу
+    let o = oborot, k = krugPosition, c = cycleNumber;
+
+    total += cycleDuration(c) - hoursInto;
+
     let order = CYCLE_ORDER[k];
     let pos = order.indexOf(c);
     if (pos < order.length - 1) {
@@ -746,13 +545,13 @@ function calcHoursTo(current, target) {
         c = CYCLE_ORDER[getKrugsForOborot(o)[0]][0];
       }
     }
-    
+
     let steps = 0;
     while (steps < 1000000) {
       if (c === targetCycleNumber) {
         return { totalHours: total, warning: warning };
       }
-      total += cycleDurationByNumber(c);
+      total += cycleDuration(c);
       order = CYCLE_ORDER[k];
       pos = order.indexOf(c);
       if (pos < order.length - 1) {
@@ -780,7 +579,6 @@ function calcHoursTo(current, target) {
 
 const $ = id => document.getElementById(id);
 
-// Заполним выпадающие списки циклов (1..16)
 function fillCycleSelects() {
   ['cur-cikl', 'to-cikl'].forEach(id => {
     const sel = $(id);
@@ -792,17 +590,14 @@ function fillCycleSelects() {
       sel.appendChild(opt);
     }
   });
-  // По умолчанию: текущий цикл = 5, целевой = 7
   $('cur-cikl').value = 5;
   $('to-cikl').value = 7;
 }
 
-// Показать ошибку в блоке
 function showError(id, msg) {
   $(id).textContent = msg || '';
 }
 
-// Очистить результаты блока
 function clearResult(prefix) {
   if (prefix === 'cur') {
     $('cur-normalized').style.display = 'none';
@@ -814,7 +609,17 @@ function clearResult(prefix) {
   }
 }
 
-// Нормализовать текущее время и показать карточки
+// Обновить подпись лимита под полем «Прошло часов» в блоке «Текущее время»
+function updateCurrentLimit() {
+  const cikl = parseInt($('cur-cikl').value, 10);
+  if (isValidCycleNumber(cikl)) {
+    $('cur-limit').textContent = formatHours(cycleDuration(cikl)) + ' ч';
+  } else {
+    $('cur-limit').textContent = '';
+  }
+}
+
+// Нормализовать и показать карточки
 function updateCurrent() {
   showError('cur-error', '');
   clearResult('cur');
@@ -823,6 +628,8 @@ function updateCurrent() {
   const krug = parseInt($('cur-krug').value, 10);
   const cikl = parseInt($('cur-cikl').value, 10);
   const hours = parseFloat($('cur-hours').value);
+
+  updateCurrentLimit();
 
   if (!Number.isInteger(oborot) || oborot < 1) {
     showError('cur-error', 'Оборот должен быть целым числом ≥ 1');
@@ -845,24 +652,15 @@ function updateCurrent() {
     return;
   }
 
-  // Показываем нормализованное время
   $('norm-oborot').textContent = norm.oborot;
   $('norm-krug').textContent = 'Круг ' + norm.krugPosition;
   $('norm-cikl').textContent = 'Цикл ' + norm.cycleNumber;
-  // Форматируем часы: убираем лишние .0
   $('norm-hours').textContent = formatHours(norm.hoursInto);
   $('cur-normalized').style.display = 'grid';
 
   return norm;
 }
 
-// Форматирование часов: 20 -> "20", 22.5 -> "22.5"
-function formatHours(h) {
-  if (Number.isInteger(h)) return h.toString();
-  return h.toString();
-}
-
-// Получить нормализованное текущее время (или null с ошибкой)
 function getNormalizedCurrent() {
   const oborot = parseInt($('cur-oborot').value, 10);
   const krug = parseInt($('cur-krug').value, 10);
@@ -909,6 +707,10 @@ $('btn-after').addEventListener('click', () => {
   $('after-krug').textContent = 'Круг ' + result.krugPosition;
   $('after-cikl').textContent = 'Цикл ' + result.cycleNumber;
   $('after-proshlo').textContent = formatHours(result.hoursInto);
+
+  // Лимит получившегося цикла
+  $('after-limit').textContent = formatHours(cycleDuration(result.cycleNumber)) + ' ч';
+
   $('after-result').style.display = 'grid';
 });
 
@@ -987,7 +789,7 @@ $('btn-reset').addEventListener('click', () => {
   updateCurrent();
 });
 
-// --- Автообновление нормализации при изменении текущего времени ---
+// --- Автообновление при изменении текущего времени ---
 ['cur-oborot', 'cur-krug', 'cur-cikl', 'cur-hours'].forEach(id => {
   $(id).addEventListener('input', updateCurrent);
   $(id).addEventListener('change', updateCurrent);
@@ -996,7 +798,6 @@ $('btn-reset').addEventListener('click', () => {
 // --- Инициализация ---
 fillCycleSelects();
 updateCurrent();
-
 </script>
 </body>
 </html>
