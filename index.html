@@ -28,13 +28,10 @@
     display: flex;
     justify-content: center;
     padding: 30px 16px;
-    line-height: 1.5;
+    line-height: 1.4;
   }
 
-  .app {
-    width: 100%;
-    max-width: 760px;
-  }
+  .app { width: 100%; max-width: 760px; }
 
   h1 {
     font-size: 1.6rem;
@@ -47,39 +44,39 @@
     color: var(--text-dim);
     text-align: center;
     font-size: 0.9rem;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
   }
 
   .panel {
     background: var(--panel);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 20px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
   }
 
   .panel h2 {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     color: var(--accent);
   }
 
   .row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 10px;
+    margin-bottom: 10px;
   }
 
   .field {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
   }
 
   .field label {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--text-dim);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -90,44 +87,38 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text);
-    padding: 10px 12px;
-    font-size: 1rem;
+    padding: 9px 11px;
+    font-size: 0.95rem;
     font-family: inherit;
     outline: none;
     transition: border-color 0.2s;
     width: 100%;
   }
 
-  input:focus, select:focus {
-    border-color: var(--accent);
-  }
+  input:focus, select:focus { border-color: var(--accent); }
 
   input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
+  input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   input[type=number] { -moz-appearance: textfield; }
 
-  /* Подпись лимита часов под полем */
   .limit-hint {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     color: var(--text-dim);
-    min-height: 1.1em;
+    min-height: 1em;
   }
 
   .error {
     color: var(--error);
-    font-size: 0.85rem;
-    min-height: 1.2em;
-    margin-top: 6px;
+    font-size: 0.82rem;
+    min-height: 1.1em;
+    margin-top: 4px;
   }
 
   .actions {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin-top: 14px;
+    margin-top: 12px;
   }
 
   button {
@@ -135,8 +126,8 @@
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 11px 20px;
-    font-size: 0.95rem;
+    padding: 9px 18px;
+    font-size: 0.9rem;
     font-weight: 500;
     font-family: inherit;
     cursor: pointer;
@@ -153,46 +144,54 @@
   }
   button.secondary:hover { background: #2e2e44; }
 
+  /* ---- КАРТОЧКИ РЕЗУЛЬТАТОВ (уменьшены) ---- */
   .result-cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
-    margin-top: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 8px;
+    margin-top: 12px;
   }
 
   .card {
     background: var(--panel-2);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
+    border-radius: 8px;
+    padding: 8px 10px;
     text-align: center;
   }
 
   .card .card-label {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     color: var(--text-dim);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 6px;
+    letter-spacing: 0.4px;
+    margin-bottom: 3px;
   }
 
   .card .card-value {
-    font-size: 1.4rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--accent);
     word-break: break-word;
+    line-height: 1.25;
   }
 
   .card .card-value.small {
-    font-size: 1.05rem;
+    font-size: 0.85rem;
     color: var(--success);
+  }
+
+  .card .card-sub {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    margin-top: 2px;
   }
 
   .warning {
     color: #ffb86b;
-    font-size: 0.85rem;
-    margin-top: 10px;
-    padding: 10px 12px;
+    font-size: 0.82rem;
+    margin-top: 8px;
+    padding: 8px 10px;
     background: rgba(255, 184, 107, 0.08);
     border: 1px solid rgba(255, 184, 107, 0.25);
     border-radius: 8px;
@@ -200,8 +199,8 @@
 
   @media (max-width: 480px) {
     h1 { font-size: 1.3rem; }
-    .panel { padding: 16px; }
-    .card .card-value { font-size: 1.15rem; }
+    .panel { padding: 14px; }
+    .card .card-value { font-size: 0.9rem; }
   }
 </style>
 </head>
@@ -284,10 +283,10 @@
         <div class="card-label">Цикл</div>
         <div class="card-value" id="after-cikl">—</div>
       </div>
-      <div class="field" style="text-align:left;">
-        <div class="card-label" style="text-align:center;">Прошло часов</div>
+      <div class="card">
+        <div class="card-label">Прошло часов</div>
         <div class="card-value small" id="after-proshlo">—</div>
-        <div class="limit-hint" id="after-limit" style="text-align:center;"></div>
+        <div class="card-sub" id="after-limit"></div>
       </div>
     </div>
   </div>
@@ -341,12 +340,22 @@
    КОНСТАНТЫ МИРА
    ============================================================ */
 
+// Порядок циклов в «настоящих» кругах 1, 2, 3.
+// Круг 4 — «маскирующийся»: он всегда ведёт себя как круг,
+// указанный в шаблоне оборота на соответствующей позиции.
 const CYCLE_ORDER = {
   1: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
   2: [2,4,6,8,10,12,14,16,1,3,5,7,9,11,13,15],
   3: [8,7,6,5,4,3,2,1,9,10,11,12,13,14,15,16]
 };
 
+// Шаблоны оборотов: для каждой из 4 позиций указано, какой круг «играет».
+// Позиция 4 — это технически 4-й круг, но он маскируется под указанный.
+//   Шаблон 1: К1, К2, К3, К2(4)   — 4-й круг смещён вправо (позиция 4)
+//   Шаблон 2: К1, К2, К1(4), К3   — 4-й круг на позиции 3
+//   Шаблон 3: К1, К3(4), К2, К3   — 4-й круг на позиции 2
+//   Шаблон 4: К2(4), К1, К2, К3   — 4-й круг на позиции 1
+//   Шаблон 5 = Шаблон 1 (период 5)
 const OBOROT_TEMPLATES = {
   1: [1, 2, 3, 2],
   2: [1, 2, 1, 3],
@@ -357,6 +366,7 @@ const OBOROT_TEMPLATES = {
 
 const BASE_OBOROT = 852;
 
+// Длительность цикла по его номеру
 function cycleDuration(n) {
   return 20 + (n - 1) * 2.5;
 }
@@ -373,6 +383,21 @@ function getTemplateNumber(oborot) {
 
 function getKrugsForOborot(oborot) {
   return OBOROT_TEMPLATES[getTemplateNumber(oborot)];
+}
+
+// Вернуть «настоящий» круг (1, 2 или 3), под который маскируется
+// указанная позиция (1..4) в данном обороте.
+function getEffectiveKrug(oborot, krugPosition) {
+  const krugs = getKrugsForOborot(oborot);
+  return krugs[krugPosition - 1];
+}
+
+// Человекочитаемое название круга для карточек:
+// для позиции 4 показываем «Круг 4 (как Круг N)», если N !== 4.
+function formatKrugLabel(oborot, krugPosition) {
+  if (krugPosition !== 4) return 'Круг ' + krugPosition;
+  const eff = getEffectiveKrug(oborot, 4);
+  return 'Круг 4 (как Круг ' + eff + ')';
 }
 
 function isValidCycleNumber(n) {
@@ -405,11 +430,18 @@ function normalizeCurrent(oborot, krugPosition, cycleNumber, hoursInto) {
     throw new Error('Прошло часов должно быть числом ≥ 0');
   }
 
+  // Валидация: цикл должен существовать в эффективном круге текущей позиции
+  let effKrug = getEffectiveKrug(oborot, krugPosition);
+  if (!CYCLE_ORDER[effKrug] || CYCLE_ORDER[effKrug].indexOf(cycleNumber) === -1) {
+    throw new Error('Цикл ' + cycleNumber + ' не найден в Круге ' + krugPosition +
+      (krugPosition === 4 ? ' (как Круг ' + effKrug + ')' : ''));
+  }
+
   let dur = cycleDuration(cycleNumber);
   while (hoursInto >= dur) {
     hoursInto -= dur;
 
-    let order = CYCLE_ORDER[krugPosition];
+    let order = CYCLE_ORDER[getEffectiveKrug(oborot, krugPosition)];
     let pos = order.indexOf(cycleNumber);
     if (pos === -1) {
       throw new Error('Ошибка: цикл не найден в круге');
@@ -418,14 +450,18 @@ function normalizeCurrent(oborot, krugPosition, cycleNumber, hoursInto) {
     if (pos < order.length - 1) {
       cycleNumber = order[pos + 1];
     } else {
+      // Конец круга — переходим к следующей позиции
       if (krugPosition < 4) {
         krugPosition += 1;
-        let newOrder = CYCLE_ORDER[getKrugsForOborot(oborot)[krugPosition - 1]];
+        let newEff = getEffectiveKrug(oborot, krugPosition);
+        let newOrder = CYCLE_ORDER[newEff];
         cycleNumber = newOrder[0];
       } else {
+        // Конец оборота — следующий оборот, позиция 1
         oborot += 1;
         krugPosition = 1;
-        cycleNumber = CYCLE_ORDER[getKrugsForOborot(oborot)[0]][0];
+        let newEff = getEffectiveKrug(oborot, 1);
+        cycleNumber = CYCLE_ORDER[newEff][0];
       }
     }
     dur = cycleDuration(cycleNumber);
@@ -452,8 +488,11 @@ function calcHoursTo(current, target) {
 
   let warning = null;
 
-  const currentAbsPos = (krugPosition - 1) * 16 + CYCLE_ORDER[krugPosition].indexOf(cycleNumber);
-  const targetAbsPos = (targetKrugPosition - 1) * 16 + CYCLE_ORDER[targetKrugPosition].indexOf(targetCycleNumber);
+  // Абсолютная позиция внутри оборота (0..63): позиция_круга*16 + позиция_цикла
+  const curEff = getEffectiveKrug(oborot, krugPosition);
+  const tgtEff = getEffectiveKrug(targetOborot, targetKrugPosition);
+  const currentAbsPos = (krugPosition - 1) * 16 + CYCLE_ORDER[curEff].indexOf(cycleNumber);
+  const targetAbsPos = (targetKrugPosition - 1) * 16 + CYCLE_ORDER[tgtEff].indexOf(targetCycleNumber);
 
   let targetIsFuture = false;
   if (targetOborot > oborot) {
@@ -468,34 +507,34 @@ function calcHoursTo(current, target) {
     let hoursToEndOfCurrent = cycleDuration(cycleNumber) - hoursInto;
 
     if (targetOborot === oborot && targetKrugPosition === krugPosition) {
-      let order = CYCLE_ORDER[krugPosition];
+      // Тот же круг, тот же оборот — считаем напрямую по порядку круга
+      let order = CYCLE_ORDER[curEff];
       let curPos = order.indexOf(cycleNumber);
       let tgtPos = order.indexOf(targetCycleNumber);
       let sum = 0;
       for (let i = curPos + 1; i < tgtPos; i++) {
         sum += cycleDuration(order[i]);
       }
-      let total = hoursToEndOfCurrent + sum;
-      return { totalHours: total, warning: null };
+      return { totalHours: hoursToEndOfCurrent + sum, warning: null };
     }
 
+    // Идём пошагово вперёд
     let steps = 0;
     let total = hoursToEndOfCurrent;
     let o = oborot, k = krugPosition, c = cycleNumber;
 
-    let order = CYCLE_ORDER[k];
+    let order = CYCLE_ORDER[getEffectiveKrug(o, k)];
     let pos = order.indexOf(c);
     if (pos < order.length - 1) {
       c = order[pos + 1];
     } else {
       if (k < 4) {
         k += 1;
-        let newOrder = CYCLE_ORDER[getKrugsForOborot(o)[k - 1]];
-        c = newOrder[0];
+        c = CYCLE_ORDER[getEffectiveKrug(o, k)][0];
       } else {
         o += 1;
         k = 1;
-        c = CYCLE_ORDER[getKrugsForOborot(o)[0]][0];
+        c = CYCLE_ORDER[getEffectiveKrug(o, 1)][0];
       }
     }
 
@@ -504,45 +543,42 @@ function calcHoursTo(current, target) {
         return { totalHours: total, warning: null };
       }
       total += cycleDuration(c);
-      order = CYCLE_ORDER[k];
+      order = CYCLE_ORDER[getEffectiveKrug(o, k)];
       pos = order.indexOf(c);
       if (pos < order.length - 1) {
         c = order[pos + 1];
       } else {
         if (k < 4) {
           k += 1;
-          let newOrder = CYCLE_ORDER[getKrugsForOborot(o)[k - 1]];
-          c = newOrder[0];
+          c = CYCLE_ORDER[getEffectiveKrug(o, k)][0];
         } else {
           o += 1;
           k = 1;
-          c = CYCLE_ORDER[getKrugsForOborot(o)[0]][0];
+          c = CYCLE_ORDER[getEffectiveKrug(o, 1)][0];
         }
       }
       steps++;
     }
     return { totalHours: null, warning: 'Не удалось найти цель в разумном пределе' };
   } else {
+    // Цель в прошлом — предупреждение и поиск ближайшего такого же номера цикла
     warning = `Цикл ${targetCycleNumber} в Круге ${targetKrugPosition} уже прошёл. Ближайший Цикл ${targetCycleNumber} наступит позже.`;
 
-    let total = 0;
+    let total = cycleDuration(cycleNumber) - hoursInto;
     let o = oborot, k = krugPosition, c = cycleNumber;
 
-    total += cycleDuration(c) - hoursInto;
-
-    let order = CYCLE_ORDER[k];
+    let order = CYCLE_ORDER[getEffectiveKrug(o, k)];
     let pos = order.indexOf(c);
     if (pos < order.length - 1) {
       c = order[pos + 1];
     } else {
       if (k < 4) {
         k += 1;
-        let newOrder = CYCLE_ORDER[getKrugsForOborot(o)[k - 1]];
-        c = newOrder[0];
+        c = CYCLE_ORDER[getEffectiveKrug(o, k)][0];
       } else {
         o += 1;
         k = 1;
-        c = CYCLE_ORDER[getKrugsForOborot(o)[0]][0];
+        c = CYCLE_ORDER[getEffectiveKrug(o, 1)][0];
       }
     }
 
@@ -552,19 +588,18 @@ function calcHoursTo(current, target) {
         return { totalHours: total, warning: warning };
       }
       total += cycleDuration(c);
-      order = CYCLE_ORDER[k];
+      order = CYCLE_ORDER[getEffectiveKrug(o, k)];
       pos = order.indexOf(c);
       if (pos < order.length - 1) {
         c = order[pos + 1];
       } else {
         if (k < 4) {
           k += 1;
-          let newOrder = CYCLE_ORDER[getKrugsForOborot(o)[k - 1]];
-          c = newOrder[0];
+          c = CYCLE_ORDER[getEffectiveKrug(o, k)][0];
         } else {
           o += 1;
           k = 1;
-          c = CYCLE_ORDER[getKrugsForOborot(o)[0]][0];
+          c = CYCLE_ORDER[getEffectiveKrug(o, 1)][0];
         }
       }
       steps++;
@@ -594,9 +629,7 @@ function fillCycleSelects() {
   $('to-cikl').value = 7;
 }
 
-function showError(id, msg) {
-  $(id).textContent = msg || '';
-}
+function showError(id, msg) { $(id).textContent = msg || ''; }
 
 function clearResult(prefix) {
   if (prefix === 'cur') {
@@ -609,7 +642,6 @@ function clearResult(prefix) {
   }
 }
 
-// Обновить подпись лимита под полем «Прошло часов» в блоке «Текущее время»
 function updateCurrentLimit() {
   const cikl = parseInt($('cur-cikl').value, 10);
   if (isValidCycleNumber(cikl)) {
@@ -619,7 +651,6 @@ function updateCurrentLimit() {
   }
 }
 
-// Нормализовать и показать карточки
 function updateCurrent() {
   showError('cur-error', '');
   clearResult('cur');
@@ -653,7 +684,7 @@ function updateCurrent() {
   }
 
   $('norm-oborot').textContent = norm.oborot;
-  $('norm-krug').textContent = 'Круг ' + norm.krugPosition;
+  $('norm-krug').textContent = formatKrugLabel(norm.oborot, norm.krugPosition);
   $('norm-cikl').textContent = 'Цикл ' + norm.cycleNumber;
   $('norm-hours').textContent = formatHours(norm.hoursInto);
   $('cur-normalized').style.display = 'grid';
@@ -678,7 +709,7 @@ function getNormalizedCurrent() {
   }
 }
 
-// --- Кнопка "Рассчитать" для "Спустя N часов" ---
+// --- "Спустя N часов" ---
 $('btn-after').addEventListener('click', () => {
   showError('after-error', '');
   clearResult('after');
@@ -704,17 +735,14 @@ $('btn-after').addEventListener('click', () => {
   }
 
   $('after-oborot').textContent = result.oborot;
-  $('after-krug').textContent = 'Круг ' + result.krugPosition;
+  $('after-krug').textContent = formatKrugLabel(result.oborot, result.krugPosition);
   $('after-cikl').textContent = 'Цикл ' + result.cycleNumber;
   $('after-proshlo').textContent = formatHours(result.hoursInto);
-
-  // Лимит получившегося цикла
-  $('after-limit').textContent = formatHours(cycleDuration(result.cycleNumber)) + ' ч';
-
+  $('after-limit').textContent = 'лимит ' + formatHours(cycleDuration(result.cycleNumber)) + ' ч';
   $('after-result').style.display = 'grid';
 });
 
-// --- Кнопка "Рассчитать" для "Сколько часов до..." ---
+// --- "Сколько часов до..." ---
 $('btn-to').addEventListener('click', () => {
   showError('to-error', '');
   clearResult('to');
@@ -763,11 +791,11 @@ $('btn-to').addEventListener('click', () => {
   }
 
   $('to-total').textContent = formatHours(res.totalHours);
-  $('to-target').textContent = `Оборот ${tOborot}, Круг ${tKrug}, Цикл ${tCikl}`;
+  $('to-target').textContent = `Оборот ${tOborot}, ${formatKrugLabel(tOborot, tKrug)}, Цикл ${tCikl}`;
   $('to-result').style.display = 'grid';
 });
 
-// --- Кнопка "Сбросить всё" ---
+// --- Сброс ---
 $('btn-reset').addEventListener('click', () => {
   $('cur-oborot').value = 852;
   $('cur-krug').value = 2;
@@ -789,13 +817,11 @@ $('btn-reset').addEventListener('click', () => {
   updateCurrent();
 });
 
-// --- Автообновление при изменении текущего времени ---
 ['cur-oborot', 'cur-krug', 'cur-cikl', 'cur-hours'].forEach(id => {
   $(id).addEventListener('input', updateCurrent);
   $(id).addEventListener('change', updateCurrent);
 });
 
-// --- Инициализация ---
 fillCycleSelects();
 updateCurrent();
 </script>
